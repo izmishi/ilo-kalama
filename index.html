@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+<link rel="stylesheet" href="style.css">
+
+</head>
+<body>
+
+<div id="overlay" ontouchstart="startOscillator()">Tap anywhere to start</div>
+
+<div class="container outer-container">
+    <div class="container column-container" id="note-key-column">
+        <div class="note-key" ontouchstart="noteKeyTouchStart(0)" ontouchend="noteKeyTouchEnd(0)" ontouchcancel="noteKeyTouchEnd(0)"></div>
+        <div class="note-key" ontouchstart="noteKeyTouchStart(1)" ontouchend="noteKeyTouchEnd(1)" ontouchcancel="noteKeyTouchEnd(1)"></div>
+        <div class="note-key" ontouchstart="noteKeyTouchStart(2)" ontouchend="noteKeyTouchEnd(2)" ontouchcancel="noteKeyTouchEnd(2)"></div> 
+        <div class="note-key" ontouchstart="noteKeyTouchStart(3)" ontouchend="noteKeyTouchEnd(3)" ontouchcancel="noteKeyTouchEnd(3)"></div>
+    </div>
+
+    <div class="container column-container" id="modifier-column">
+        <div class="modifier-key">Not done yet</div>
+        <div class="modifier-key octave-container" ontouchstart="octaveKeyTouchMove(event)" ontouchmove="octaveKeyTouchMove(event)" ontouchend="octaveKeyTouchMove(event)" ontouchcancel="octaveKeyTouchMove(event)">
+            <div class="octave-key octave-key-high" id="octave3" style="opacity: calc(8/9)"></div>
+            <div class="octave-key octave-key-high" id="octave2" style="opacity: calc(7/9)"></div>
+            <div class="octave-key octave-key-high" id="octave1" style="opacity: calc(6/9)"></div>
+        </div>
+        <div class="modifier-key octave-container" ontouchstart="octaveKeyTouchMove(event)" ontouchmove="octaveKeyTouchMove(event)" ontouchend="octaveKeyTouchMove(event)" ontouchcancel="octaveKeyTouchMove(event)">
+            <div class="octave-key octave-key-low" id="octave-2" style="opacity: calc(5/6)"></div>
+            <div class="octave-key octave-key-low" id="octave-1" style="opacity: calc(4/6)"></div>
+        </div>
+        <div class="modifier-key">Not done yet</div>
+    </div>
+</div>
+
+
+<script src="script.js"></script>
+</body>
+</html>

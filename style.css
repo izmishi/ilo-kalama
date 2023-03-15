@@ -1,0 +1,94 @@
+html, body {
+    margin: 0;
+    width: 100vw;
+    height: 100vh;
+    height: -webkit-fill-available;
+    overflow: hidden;
+/*        user-scalable=no;*/
+    -webkit-user-select: none; /* Safari */
+    -ms-user-select: none; /* IE 10 and IE 11 */
+    user-select: none; /* Standard syntax */
+    background-color: black;
+    touch-action: none;
+    font-family: sans-serif;
+}
+
+#overlay {
+    position: fixed; /* Sit on top of the page content */
+    width: 100vw; /* Full width (cover the whole page) */
+    height: 100vh; /* Full height (cover the whole page) */
+    top: 0; 
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0,0,0,0.5); /* Black background with opacity */
+    z-index: 2; /* Specify a stack order in case you're using a different order for other elements */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 100px;
+    color: white;
+}
+
+.container {
+    display: flex;
+    align-items: stretch;
+    height: 100vh;
+    height: -webkit-fill-available;
+    margin: 0px;
+    padding: 0;
+    gap: 16px;
+/*        touch-action: manipulation;*/
+}
+
+.outer-container {
+    width: 100%;
+/*        background-color: DodgerBlue;*/
+    flex-direction: row;
+}
+
+.column-container {
+    width: 50%;
+/*        background-color: #000000;*/
+    flex-direction: column;
+    flex: 1;
+    justify-content: center;
+}
+
+.column-container > div {
+    clip-path: inset(0px round 32px);
+    width: 100%;
+    height: 300px;
+    text-align: center;
+    font-size: 30px;
+}
+
+.column-container > .note-key {
+    background-color: #f1f1f1;
+}
+
+.column-container > .modifier-key {
+    background-color: #888888;
+}
+
+
+.octave-container {
+    display: flex;
+    align-items: stretch;
+    width: 100%;
+    margin: 0px;
+    padding: 0;
+    background-color: blue;
+    flex-direction: row;
+}
+
+.octave-key {
+    width: 100%;
+}
+.octave-key-high {
+    background-color: hsl(184, 100%, 50%);
+}
+.octave-key-low {
+    background-color: hsl(342, 100%, 50%);
+}
+
