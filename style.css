@@ -21,8 +21,8 @@ html, body {
     left: 0;
     right: 0;
     bottom: 0;
-    background-color: rgba(0,0,0,0.5); /* Black background with opacity */
-    z-index: 2; /* Specify a stack order in case you're using a different order for other elements */
+    background-color: rgba(0,0,0,0.5);
+    z-index: 2;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -38,18 +38,15 @@ html, body {
     margin: 0px;
     padding: 0;
     gap: 16px;
-/*        touch-action: manipulation;*/
 }
 
 .outer-container {
     width: 100%;
-/*        background-color: DodgerBlue;*/
     flex-direction: row;
 }
 
 .column-container {
     width: 50%;
-/*        background-color: #000000;*/
     flex-direction: column;
     flex: 1;
     justify-content: center;
@@ -68,7 +65,7 @@ html, body {
 }
 
 .column-container > .modifier-key {
-    background-color: #888888;
+    background-color: #777777;
 }
 
 
@@ -78,7 +75,6 @@ html, body {
     width: 100%;
     margin: 0px;
     padding: 0;
-    background-color: blue;
     flex-direction: row;
 }
 

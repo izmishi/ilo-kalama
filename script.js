@@ -23,7 +23,7 @@ function updateFrequency() {
 
         gainNode.gain.value = baseAmplitude * equalLoudnessCorrection(baseFrequency);
     } else {
-        baseAmplitude = 0.0001;
+        baseAmplitude = 0;
     }
 }
 
@@ -31,7 +31,7 @@ function updateAmplitude() {
     const scaleDegree = 4 * noteKeyDown[0] + 2 * noteKeyDown[1] + noteKeyDown[2]
     if (scaleDegree == 0) {
         gainNode.gain.setValueAtTime(gainNode.gain.value, audioContext.currentTime); 
-        gainNode.gain.exponentialRampToValueAtTime(0.0001, audioContext.currentTime + 0.03);
+        gainNode.gain.linearRampToValueAtTime(0, audioContext.currentTime + 0.05);
     }
 }
 
@@ -40,8 +40,7 @@ function noteKeyTouchStart(finger) {
     updateFrequency();
 
     gainNode.gain.setValueAtTime(gainNode.gain.value, audioContext.currentTime); 
-    gainNode.gain.exponentialRampToValueAtTime(baseAmplitude * equalLoudnessCorrection(oscillator.frequency.value), audioContext.currentTime + 0.03);
-    // oscillator.start();
+    gainNode.gain.linearRampToValueAtTime(baseAmplitude * equalLoudnessCorrection(oscillator.frequency.value), audioContext.currentTime + 0.05);
 }
 
 function noteKeyTouchEnd(finger) {
@@ -91,5 +90,3 @@ function startOscillator() {
     oscillator.start();
     document.getElementById("overlay").style.display = "none";
 }
-
-document.addEventListener("DOMContentLoaded", startup);
