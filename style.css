@@ -34,7 +34,7 @@ html, body {
     display: flex;
     align-items: stretch;
     height: 100vh;
-    height: -webkit-fill-available;
+/*    height: -webkit-fill-available;*/
     margin: 0px;
     padding: 0;
     gap: 16px;
@@ -55,7 +55,7 @@ html, body {
 .column-container > div {
     clip-path: inset(0px round 32px);
     width: 100%;
-    height: 300px;
+    height: 320px;
     text-align: center;
     font-size: 30px;
 }
@@ -64,8 +64,12 @@ html, body {
     background-color: #f1f1f1;
 }
 
+#note-key-3 {
+    opacity: 0.6;
+}
+
 .column-container > .modifier-key {
-    background-color: #777777;
+    background-color: #222222;
 }
 
 
