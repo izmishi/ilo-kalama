@@ -6,14 +6,14 @@
 </head>
 <body>
 
-<div id="overlay" ontouchstart="startOscillator()">Tap anywhere to start</div>
+<div id="overlay">Tap anywhere to start</div>
 
 <div class="container outer-container">
     <div class="container column-container" id="note-key-column">
-        <div class="note-key" ontouchstart="noteKeyTouchStart(0)" ontouchend="noteKeyTouchEnd(0)" ontouchcancel="noteKeyTouchEnd(0)"></div>
-        <div class="note-key" ontouchstart="noteKeyTouchStart(1)" ontouchend="noteKeyTouchEnd(1)" ontouchcancel="noteKeyTouchEnd(1)"></div>
-        <div class="note-key" ontouchstart="noteKeyTouchStart(2)" ontouchend="noteKeyTouchEnd(2)" ontouchcancel="noteKeyTouchEnd(2)"></div> 
-        <div class="note-key" ontouchstart="noteKeyTouchStart(3)" ontouchend="noteKeyTouchEnd(3)" ontouchcancel="noteKeyTouchEnd(3)"></div>
+        <div class="note-key" id="note-key-0" ontouchstart="noteKeyTouchStart(0)" ontouchend="noteKeyTouchEnd(0)" ontouchcancel="noteKeyTouchEnd(0)"></div>
+        <div class="note-key" id="note-key-1" ontouchstart="noteKeyTouchStart(1)" ontouchend="noteKeyTouchEnd(1)" ontouchcancel="noteKeyTouchEnd(1)"></div>
+        <div class="note-key" id="note-key-2" ontouchstart="noteKeyTouchStart(2)" ontouchend="noteKeyTouchEnd(2)" ontouchcancel="noteKeyTouchEnd(2)"></div> 
+        <div class="note-key" id="note-key-3" ontouchstart="noteKeyTouchStart(3)" ontouchend="noteKeyTouchEnd(3)" ontouchcancel="noteKeyTouchEnd(3)"></div>
     </div>
 
     <div class="container column-container" id="modifier-column">
