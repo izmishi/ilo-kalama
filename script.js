@@ -2,6 +2,7 @@ var noteKeyDown = [false, false, false, false];
 
 const middleC = 440 / Math.pow(2, 0.75);
 const majorScaleSteps = [0, 2, 4, 5, 7, 9, 11];
+const minRampTime = 0.002;
 var currentOctave = 0;
 
 var baseAmplitude = 2;
@@ -21,7 +22,12 @@ function updateFrequency() {
 
         oscillator.frequency.value = baseFrequency; // hertz
 
-        gainNode.gain.value = baseAmplitude * equalLoudnessCorrection(baseFrequency);
+        if (gainNode.gain.value > 0) {
+            // gainNode.gain.value = baseAmplitude * equalLoudnessCorrection(baseFrequency);
+            gainNode.gain.setValueAtTime(gainNode.gain.value, audioContext.currentTime); 
+            gainNode.gain.linearRampToValueAtTime(baseAmplitude * equalLoudnessCorrection(baseFrequency), audioContext.currentTime + minRampTime);
+        }
+
     } else {
         baseAmplitude = 0;
     }
@@ -31,7 +37,7 @@ function updateAmplitude() {
     const scaleDegree = 4 * noteKeyDown[0] + 2 * noteKeyDown[1] + noteKeyDown[2]
     if (scaleDegree == 0) {
         gainNode.gain.setValueAtTime(gainNode.gain.value, audioContext.currentTime); 
-        gainNode.gain.linearRampToValueAtTime(0, audioContext.currentTime + 0.05);
+        gainNode.gain.linearRampToValueAtTime(0, audioContext.currentTime + minRampTime);
     }
 }
 
@@ -40,7 +46,7 @@ function noteKeyTouchStart(finger) {
     updateFrequency();
 
     gainNode.gain.setValueAtTime(gainNode.gain.value, audioContext.currentTime); 
-    gainNode.gain.linearRampToValueAtTime(baseAmplitude * equalLoudnessCorrection(oscillator.frequency.value), audioContext.currentTime + 0.05);
+    gainNode.gain.linearRampToValueAtTime(baseAmplitude * equalLoudnessCorrection(oscillator.frequency.value), audioContext.currentTime + minRampTime);
 }
 
 function noteKeyTouchEnd(finger) {
