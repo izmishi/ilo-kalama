@@ -10,6 +10,10 @@ var leftHanded = false;
 var baseAmplitude = 0;
 var baseFrequency = middleC;
 
+var audioContext;
+var oscillator;
+var oscillatorAmplitudeNode;
+var mixerNode;
 
 
 function setAudioParameter(parameter, value, rampDuration = minRampTime) {
@@ -88,26 +92,26 @@ function octaveKeyTouchMove(event) {
     updateFrequency();  
 }
 
+function setUpAudioContext() {
+    audioContext = new (window.AudioContext || window.webkitAudioContext)();
 
+    oscillator = audioContext.createOscillator();
+    oscillator.type = 'sine';
+    oscillator.frequency.value = 440 / Math.pow(2, 0.75); // hertz
 
-const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+    oscillatorAmplitudeNode = audioContext.createGain();
+    oscillatorAmplitudeNode.gain.setValueAtTime(0, audioContext.currentTime); 
 
-const oscillator = audioContext.createOscillator();
-oscillator.type = 'sine';
-oscillator.frequency.value = 440 / Math.pow(2, 0.75); // hertz
+    mixerNode = audioContext.createGain();
+    mixerNode.gain.setValueAtTime(1, audioContext.currentTime); 
 
-const oscillatorAmplitudeNode = audioContext.createGain();
-oscillatorAmplitudeNode.gain.setValueAtTime(0, audioContext.currentTime); 
-
-const mixerNode = audioContext.createGain();
-mixerNode.gain.setValueAtTime(1, audioContext.currentTime); 
-
-oscillator.connect(oscillatorAmplitudeNode);
-oscillatorAmplitudeNode.connect(mixerNode);
-mixerNode.connect(audioContext.destination);
-
+    oscillator.connect(oscillatorAmplitudeNode);
+    oscillatorAmplitudeNode.connect(mixerNode);
+    mixerNode.connect(audioContext.destination);
+}
 
 function startOscillator() {
+    setUpAudioContext()
     oscillator.start();
     requestMotionPermission();
     document.getElementById("overlay").style.display = "none";
@@ -119,13 +123,19 @@ function updateLoop(vibrato, volume) {
 }
 
 function requestMotionPermission() {
-    DeviceMotionEvent.requestPermission()
-        .then(response => {
-            if (response == 'granted') {
-                window.addEventListener('devicemotion', handleMotionEvent)
-            }
-        })
-        .catch(console.error);
+    if (typeof DeviceMotionEvent.requestPermission === 'function') {
+        DeviceMotionEvent.requestPermission()
+            .then(response => {
+                if (response == 'granted') {
+                    window.addEventListener('devicemotion', handleMotionEvent)
+                }
+            })
+            .catch(function() {
+                console.log("Failed to request permission");
+            });
+    } else {
+        window.addEventListener('devicemotion', handleMotionEvent)
+    }
 }
 
 function vibratoFromAcelerometer(y) {
@@ -154,6 +164,12 @@ function handleMotionEvent(event) {
 }
 
 
-
 const overlay = document.getElementById("overlay");
-overlay.addEventListener("click", startOscillator);
+
+if (navigator.maxTouchPoints >= 4) {
+    // Supports at least 4 multi-touch points
+    overlay.addEventListener("click", startOscillator);
+} else {
+    overlay.innerHTML = "Please use a device which supports at least 4 multi-touch points";
+}
+
