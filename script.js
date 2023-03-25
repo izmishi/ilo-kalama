@@ -1,19 +1,20 @@
-var noteKeyDown = [false, false, false, false];
+let noteKeyDown = [false, false, false, false];
 
 const middleC = 440 / Math.pow(2, 0.75);
 const majorScaleSteps = [0, 2, 4, 5, 7, 9, 11];
-const minRampTime = 0.01;
-var currentOctave = 0;
+const minRampTime = 0.001;
+let currentOctave = 0;
 
-var leftHanded = false;
+let leftHanded = false;
 
-var baseAmplitude = 0;
-var baseFrequency = middleC;
+let baseAmplitude = 0;
+let baseFrequency = middleC;
 
-var audioContext;
-var oscillator;
-var oscillatorAmplitudeNode;
-var mixerNode;
+let audioContext;
+let oscillator;
+let oscillatorAmplitudeNode;
+let lowPassFilter;
+let mixerNode;
 
 
 function setAudioParameter(parameter, value, rampDuration = minRampTime) {
@@ -64,12 +65,32 @@ function noteKeyTouchStart(finger) {
     if (oscillatorAmplitudeIs0) {
         setAudioParameter(oscillatorAmplitudeNode.gain, baseAmplitude * equalLoudnessCorrection(baseFrequency))
     }
+
+    const opacity = 0.8 * (finger == 3 ? 0.6 : 1)
+    document.getElementById(`note-key-${finger}`).style.setProperty("opacity", `${opacity}`);
 }
 
 function noteKeyTouchEnd(finger) {
     noteKeyDown[finger] = false;
     updateFrequency();
     updateAmplitude();
+
+    const opacity = 1 * (finger == 3 ? 0.6 : 1)
+    document.getElementById(`note-key-${finger}`).style.setProperty("opacity", `${opacity}`);
+}
+
+
+function updateNoteKeyColours() {
+    let noteKeys = document.getElementsByClassName("note-key");
+    const hue = currentOctave > 0 ? 184 : 342
+    const lightness = 100 - (Math.abs(currentOctave) * 50 / (currentOctave > 0 ? 3 : 2))
+    for (key of noteKeys) {
+        key.style.setProperty("background-color", `hsl(${hue}, 100%, ${lightness}%)`);
+    }
+}
+
+function updateNoteKeyColumnOpacity(opacity) {
+    document.getElementById(`note-key-column`).style.setProperty("opacity", `${opacity}`);
 }
 
 function octaveKeyTouchMove(event) {
@@ -78,35 +99,47 @@ function octaveKeyTouchMove(event) {
         currentOctave = 0;
     } else {
         const touch = octaveTouches[octaveTouches.length - 1][1];
-        var x = touch.pageX;
-        var y = touch.pageY;
+        let x = touch.pageX;
+        let y = touch.pageY;
 
         const touchTarget = touch.target;
         const currentElement = document.elementFromPoint(x, y);
 
         if (touchTarget.className == currentElement.className) {
-            octave = currentElement.id.substring(6)
-            currentOctave = parseInt(octave);
-        }   
-    }   
-    updateFrequency();  
+            const octaveString = currentElement.id.substring(6)
+            currentOctave = parseInt(octaveString);
+        }
+    }
+    updateNoteKeyColours();
+    updateFrequency();
 }
 
 function setUpAudioContext() {
     audioContext = new (window.AudioContext || window.webkitAudioContext)();
 
+    // 4sin^3(x) = 3sin(x) + sin(3x)
+    const realCoeffs = new Float32Array([0,0,0,0]); // No DC offset or cosine components
+    const imagCoeffs = new Float32Array([0,3,0,1]); // Sine components
+    const wave = audioContext.createPeriodicWave(realCoeffs, imagCoeffs);
+
     oscillator = audioContext.createOscillator();
-    oscillator.type = 'sine';
+    // oscillator.type = 'sine';
+    oscillator.setPeriodicWave(wave);
     oscillator.frequency.value = 440 / Math.pow(2, 0.75); // hertz
 
     oscillatorAmplitudeNode = audioContext.createGain();
-    oscillatorAmplitudeNode.gain.setValueAtTime(0, audioContext.currentTime); 
+    oscillatorAmplitudeNode.gain.setValueAtTime(0, audioContext.currentTime);
+
+    lowPassFilter = audioContext.createBiquadFilter();
+    lowPassFilter.type = "lowpass";
+    lowPassFilter.frequency.value = 24000;
 
     mixerNode = audioContext.createGain();
     mixerNode.gain.setValueAtTime(1, audioContext.currentTime); 
 
     oscillator.connect(oscillatorAmplitudeNode);
-    oscillatorAmplitudeNode.connect(mixerNode);
+    oscillatorAmplitudeNode.connect(lowPassFilter);
+    lowPassFilter.connect(mixerNode);
     mixerNode.connect(audioContext.destination);
 }
 
@@ -150,6 +183,21 @@ function volumeFromAccelerometer(x) {
     return Math.max(vol, 0)
 }
 
+function updateLowPassFilterForVolume(volume) {
+    let lowPassCutOff = baseFrequency * Math.pow(volume * 1.5, 2)
+    lowPassFilter.frequency.value = Math.min(lowPassCutOff, 24000)
+}
+
+function updateBackgroundColourForVibrato(vibrato) {
+    const b = Math.log2(vibrato) * 12;
+    const c = Math.atan(2 * b) / Math.PI;
+
+    const redComponent = 255 * (0.5 + c);
+    const greenComponent = 255 * (0.5 - c);
+    const alphaComponent = Math.tanh(Math.abs(b));
+    document.body.style.setProperty("background-color", `rgba(${redComponent}, ${greenComponent}, 255, ${alphaComponent})`);
+}
+
 function handleMotionEvent(event) {
     const gravityX = event.accelerationIncludingGravity.x / 9.8;
     const gravityY = event.accelerationIncludingGravity.y / 9.8;
@@ -159,8 +207,12 @@ function handleMotionEvent(event) {
     const z = event.acceleration.z / 9.8;
 
     const vibrato = vibratoFromAcelerometer(y);
-    const volume = volumeFromAccelerometer(gravityX);
-    updateLoop(vibrato, volume)
+    const volume = volumeFromAccelerometer(gravityX - x);
+
+    updateLoop(vibrato, volume);
+    updateNoteKeyColumnOpacity(Math.max(1/256, Math.min(1, volume)));
+    updateLowPassFilterForVolume(volume);
+    updateBackgroundColourForVibrato(vibrato);
 }
 
 
