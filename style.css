@@ -1,22 +1,21 @@
 html, body {
     margin: 0;
-    width: 100vw;
-    height: 100vh;
-    height: -webkit-fill-available;
-    overflow: hidden;
-/*        user-scalable=no;*/
+    width: 100vw; /* Must be in normal viewport units */
+    height: 100vh; /* Must be in normal viewport units */
+    background-color: black;
+    font-family: sans-serif;
+
+/*  Disble unwanted UI interactions */
     -webkit-user-select: none; /* Safari */
     -ms-user-select: none; /* IE 10 and IE 11 */
     user-select: none; /* Standard syntax */
-    background-color: black;
-    touch-action: none;
-    font-family: sans-serif;
+    touch-action: none;  /*Disable pinch-to-zoom and scrolling */
 }
 
 #overlay {
-    position: fixed; /* Sit on top of the page content */
-    width: 100vw; /* Full width (cover the whole page) */
-    height: 100vh; /* Full height (cover the whole page) */
+    position: fixed;
+    width: 100vw;
+    height: 100vh;
     top: 0; 
     left: 0;
     right: 0;
@@ -33,8 +32,8 @@ html, body {
 .container {
     display: flex;
     align-items: stretch;
-    height: 100vh;
-/*    height: -webkit-fill-available;*/
+    width: 100dvw;
+    height: 100dvh;
     margin: 0px;
     padding: 0;
     gap: 16px;
