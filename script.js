@@ -2,7 +2,7 @@ let noteKeyDown = [false, false, false, false];
 
 const middleC = 440 / Math.pow(2, 0.75);
 const majorScaleSteps = [0, 2, 4, 5, 7, 9, 11];
-const minRampTime = 0.001;
+const minRampTime = 0.005;
 let currentOctave = 0;
 
 let leftHanded = false;
@@ -19,7 +19,7 @@ let mixerNode;
 
 function setAudioParameter(parameter, value, rampDuration = minRampTime) {
     parameter.cancelAndHoldAtTime(audioContext.currentTime)
-    parameter.setValueAtTime(oscillatorAmplitudeNode.gain.value, audioContext.currentTime);
+    parameter.setValueAtTime(parameter.value, audioContext.currentTime);
     parameter.linearRampToValueAtTime(value, audioContext.currentTime + rampDuration);
 }
 
@@ -90,7 +90,7 @@ function updateNoteKeyColours() {
 }
 
 function updateNoteKeyColumnOpacity(opacity) {
-    document.getElementById(`note-key-column`).style.setProperty("opacity", `${opacity}`);
+    document.getElementById(`note-key-column`).style.setProperty("opacity", `${Math.max(0, Math.min(1, opacity))}`);
 }
 
 function octaveKeyTouchMove(event) {
@@ -123,7 +123,6 @@ function setUpAudioContext() {
     const wave = audioContext.createPeriodicWave(realCoeffs, imagCoeffs);
 
     oscillator = audioContext.createOscillator();
-    // oscillator.type = 'sine';
     oscillator.setPeriodicWave(wave);
     oscillator.frequency.value = 440 / Math.pow(2, 0.75); // hertz
 
@@ -152,7 +151,7 @@ function startOscillator() {
 
 function updateLoop(vibrato, volume) {
     oscillator.frequency.value = baseFrequency * vibrato;
-    mixerNode.gain.linearRampToValueAtTime(volume, audioContext.currentTime + 1/60);
+    setAudioParameter(mixerNode.gain, volume, 1/60);
 }
 
 function requestMotionPermission() {
@@ -160,14 +159,14 @@ function requestMotionPermission() {
         DeviceMotionEvent.requestPermission()
             .then(response => {
                 if (response == 'granted') {
-                    window.addEventListener('devicemotion', handleMotionEvent)
+                    window.addEventListener('devicemotion', handleMotionEvent);
                 }
             })
             .catch(function() {
                 console.log("Failed to request permission");
             });
     } else {
-        window.addEventListener('devicemotion', handleMotionEvent)
+        window.addEventListener('devicemotion', handleMotionEvent);
     }
 }
 
@@ -180,12 +179,12 @@ function volumeFromAccelerometer(x) {
     const scaledX = Math.min(Math.max(x * -1.4, -1), 1) * sign;
     const angle = 2 * Math.acos(scaledX) / Math.PI;
     const vol = (Math.pow(4, 1.5 * angle) - 1) / 4;
-    return Math.max(vol, 0)
+    return Math.max(vol, 0);
 }
 
 function updateLowPassFilterForVolume(volume) {
-    let lowPassCutOff = baseFrequency * Math.pow(volume * 1.5, 2)
-    lowPassFilter.frequency.value = Math.min(lowPassCutOff, 24000)
+    let lowPassCutOff = baseFrequency * Math.pow(volume * 1.5, 2);
+    setAudioParameter(lowPassFilter.frequency, Math.min(lowPassCutOff, 24000), 1/60);
 }
 
 function updateBackgroundColourForVibrato(vibrato) {
@@ -210,7 +209,7 @@ function handleMotionEvent(event) {
     const volume = volumeFromAccelerometer(gravityX - x);
 
     updateLoop(vibrato, volume);
-    updateNoteKeyColumnOpacity(Math.max(1/256, Math.min(1, volume)));
+    updateNoteKeyColumnOpacity(volume);
     updateLowPassFilterForVolume(volume);
     updateBackgroundColourForVibrato(vibrato);
 }
