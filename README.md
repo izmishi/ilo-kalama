@@ -1,12 +1,12 @@
-# ild kalama
+# ilo kalama
 
-A musical intrument designed around being playable on a smartphone.
+A musical instrument designed around being playable on a smartphone.
 
 I was inspired to make a musical instrument after watching [Wintergatan's modulin video](https://www.youtube.com/watch?v=QaW5K85UDR0).
 5 years after making an iOS app for my own personal use, I made a web version for anyone to try.
 
 The timbre was chosen to resemble that of a theremin. 
-The name comes from the [toki pona](tokipona.org) for 'musical instrument'.
+The name comes from the [toki pona](https://www.tokipona.org) for 'musical instrument'.
 
 ---
 
